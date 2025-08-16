@@ -1,3 +1,13 @@
+## Configuration
+
+Create a `.env` file (or configure your hosting provider env) with:
+
+```
+VITE_CONTRACT_ADDRESS=juno1...
+```
+
+The UI displays amounts in JUNO, but transactions are sent in `ujuno` under the hood.
+
 # Welcome to your Lovable project
 
 ## Project info

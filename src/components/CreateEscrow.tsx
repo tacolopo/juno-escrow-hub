@@ -97,22 +97,6 @@ export const CreateEscrow = ({ onCreateEscrow, isCreating }: CreateEscrowProps) 
       return;
     }
 
-    // Ensure addresses are unique among beneficiary and approvers
-    const participants = [
-      formData.beneficiary.trim(),
-      formData.approver1.trim(),
-      formData.approver2.trim(),
-      ...(formData.approver3 ? [formData.approver3.trim()] : []),
-    ];
-    const uniqueCount = new Set(participants).size;
-    if (uniqueCount !== participants.length) {
-      toast({
-        title: "Duplicate Addresses",
-        description: "Beneficiary and approver addresses must be all different.",
-        variant: "destructive",
-      });
-      return;
-    }
 
     onCreateEscrow(formData);
   };
@@ -142,9 +126,8 @@ export const CreateEscrow = ({ onCreateEscrow, isCreating }: CreateEscrowProps) 
                 <Label htmlFor="amount">Amount *</Label>
                 <Input
                   id="amount"
-                  type="number"
-                  step="0.000001"
-                  placeholder="0.000000"
+                  inputMode="decimal"
+                  placeholder="e.g., 0.5"
                   value={formData.amount}
                   onChange={(e) => handleInputChange("amount", e.target.value)}
                   required
@@ -174,7 +157,7 @@ export const CreateEscrow = ({ onCreateEscrow, isCreating }: CreateEscrowProps) 
                 <Label htmlFor="beneficiary">Beneficiary Address *</Label>
                 <Input
                   id="beneficiary"
-                  placeholder="juno1... or cosmos1..."
+                  placeholder="juno1..."
                   value={formData.beneficiary}
                   onChange={(e) => handleInputChange("beneficiary", e.target.value)}
                   required
@@ -188,7 +171,7 @@ export const CreateEscrow = ({ onCreateEscrow, isCreating }: CreateEscrowProps) 
                   <Label htmlFor="approver1">First Approver *</Label>
                   <Input
                     id="approver1"
-                    placeholder="juno1... or cosmos1..."
+                    placeholder="juno1..."
                     value={formData.approver1}
                     onChange={(e) => handleInputChange("approver1", e.target.value)}
                     required
@@ -199,7 +182,7 @@ export const CreateEscrow = ({ onCreateEscrow, isCreating }: CreateEscrowProps) 
                   <Label htmlFor="approver2">Second Approver *</Label>
                   <Input
                     id="approver2"
-                    placeholder="juno1... or cosmos1..."
+                    placeholder="juno1..."
                     value={formData.approver2}
                     onChange={(e) => handleInputChange("approver2", e.target.value)}
                     required
