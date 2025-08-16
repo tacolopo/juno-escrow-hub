@@ -7,6 +7,7 @@ import { EscrowList, EscrowData } from "@/components/EscrowList";
 import { Globe, Plus, List, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { CosmWasmClient, SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
+import { GasPrice } from "@cosmjs/stargate";
 import { OfflineSigner } from "@cosmjs/proto-signing";
 import heroImage from "@/assets/cosmos-hero.jpg";
 import planetIcon from "@/assets/planet-icon.png";
@@ -37,7 +38,9 @@ const Index = () => {
     await window.keplr.enable("juno-1");
     const offlineSigner = (await window.keplr.getOfflineSignerAuto("juno-1")) as OfflineSigner;
     
-    return await SigningCosmWasmClient.connectWithSigner(RPC_ENDPOINT, offlineSigner);
+    return await SigningCosmWasmClient.connectWithSigner(RPC_ENDPOINT, offlineSigner, {
+      gasPrice: GasPrice.fromString("0.025ujuno"),
+    });
   };
 
   // Load escrows for connected wallet
