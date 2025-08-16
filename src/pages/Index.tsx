@@ -11,7 +11,7 @@ import { OfflineSigner } from "@cosmjs/proto-signing";
 import heroImage from "@/assets/cosmos-hero.jpg";
 import planetIcon from "@/assets/planet-icon.png";
 
-const CONTRACT_ADDRESS = import.meta.env.VITE_CONTRACT_ADDRESS as string;
+const CONTRACT_ADDRESS = "juno1rs3zyzvascpnaad90hklf54x4unmt8da93m56flq7raqghfztvpsc2pcyv";
 const RPC_ENDPOINT = "https://juno-rpc.publicnode.com:443";
 
 const Index = () => {
