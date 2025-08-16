@@ -263,6 +263,11 @@ const Index = () => {
           <div className="max-w-md mx-auto">
             <WalletConnect
               onConnect={handleWalletConnect}
+              onDisconnect={() => {
+                setIsConnected(false);
+                setWalletAddress("");
+                setEscrows([]);
+              }}
               isConnected={isConnected}
               address={walletAddress}
             />
@@ -273,6 +278,11 @@ const Index = () => {
             <div className="animate-fade-in">
               <WalletConnect
                 onConnect={handleWalletConnect}
+                onDisconnect={() => {
+                  setIsConnected(false);
+                  setWalletAddress("");
+                  setEscrows([]);
+                }}
                 isConnected={isConnected}
                 address={walletAddress}
               />

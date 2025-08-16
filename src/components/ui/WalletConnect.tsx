@@ -6,11 +6,12 @@ import { useToast } from "@/hooks/use-toast";
 
 interface WalletConnectProps {
   onConnect: (address: string) => void;
+  onDisconnect: () => void;
   isConnected: boolean;
   address?: string;
 }
 
-export const WalletConnect = ({ onConnect, isConnected, address }: WalletConnectProps) => {
+export const WalletConnect = ({ onConnect, onDisconnect, isConnected, address }: WalletConnectProps) => {
   const [isConnecting, setIsConnecting] = useState(false);
   const { toast } = useToast();
 
@@ -60,6 +61,7 @@ export const WalletConnect = ({ onConnect, isConnected, address }: WalletConnect
               {`${address.slice(0, 10)}...${address.slice(-8)}`}
             </p>
           </div>
+          <Button size="sm" variant="outline" onClick={onDisconnect}>Disconnect</Button>
         </div>
       </Card>
     );
