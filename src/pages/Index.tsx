@@ -35,7 +35,7 @@ const Index = () => {
     }
 
     await window.keplr.enable("juno-1");
-    const offlineSigner = window.keplr.getOfflineSignerAuto("juno-1") as OfflineSigner;
+    const offlineSigner = (await window.keplr.getOfflineSignerAuto("juno-1")) as OfflineSigner;
     
     return await SigningCosmWasmClient.connectWithSigner(RPC_ENDPOINT, offlineSigner);
   };
@@ -90,7 +90,7 @@ const Index = () => {
 
       const funds = [{
         amount: amountInMicroUnits,
-        denom: formData.denom
+        denom: "ujuno"
       }];
 
       const result = await client.execute(
@@ -113,11 +113,11 @@ const Index = () => {
       setActiveTab("escrows");
       await loadEscrows();
       
-    } catch (error) {
+    } catch (error: any) {
       console.error("Failed to create escrow:", error);
       toast({
         title: "Failed to Create Escrow",
-        description: "Could not create escrow. Please try again.",
+        description: error?.message || "Could not create escrow. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -153,11 +153,11 @@ const Index = () => {
       // Reload escrows
       await loadEscrows();
       
-    } catch (error) {
+    } catch (error: any) {
       console.error("Failed to approve escrow:", error);
       toast({
         title: "Failed to Approve",
-        description: "Could not submit approval. Please try again.",
+        description: error?.message || "Could not submit approval. Please try again.",
         variant: "destructive",
       });
     }
@@ -191,11 +191,11 @@ const Index = () => {
       // Reload escrows
       await loadEscrows();
       
-    } catch (error) {
+    } catch (error: any) {
       console.error("Failed to cancel escrow:", error);
       toast({
         title: "Failed to Cancel",
-        description: "Could not cancel escrow. Please try again.",
+        description: error?.message || "Could not cancel escrow. Please try again.",
         variant: "destructive",
       });
     }

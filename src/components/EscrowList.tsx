@@ -56,8 +56,8 @@ export const EscrowList = ({
   };
 
   const formatAmount = (amount: { amount: string; denom: string }) => {
-    const value = parseFloat(amount.amount) / 1000000; // Convert from micro units
-    return `${value.toFixed(6)} ${amount.denom.replace('u', '').toUpperCase()}`;
+    const value = parseFloat(amount.amount) / 1000000; // micro ujuno -> JUNO
+    return `${value.toFixed(6)} JUNO`;
   };
 
   const formatDate = (timestamp: number) => {

@@ -19,7 +19,7 @@ export interface EscrowFormData {
   approver3?: string;
   description: string;
   amount: string;
-  denom: string;
+  denom: string; // Display-only in UI (always JUNO)
 }
 
 export const CreateEscrow = ({ onCreateEscrow, isCreating }: CreateEscrowProps) => {
@@ -30,7 +30,7 @@ export const CreateEscrow = ({ onCreateEscrow, isCreating }: CreateEscrowProps) 
     approver3: "",
     description: "",
     amount: "",
-    denom: "ujuno"
+    denom: "JUNO"
   });
 
   const { toast } = useToast();
@@ -48,39 +48,39 @@ export const CreateEscrow = ({ onCreateEscrow, isCreating }: CreateEscrowProps) 
       return;
     }
 
-    // Validate addresses (basic Cosmos address format - will work for Juno currently)
-    const cosmosAddressRegex = /^(juno|cosmos)[a-z0-9]{39}$/;
-    if (!cosmosAddressRegex.test(formData.beneficiary)) {
+    // Validate addresses for Juno mainnet (bech32 with hrp 'juno')
+    const junoAddressRegex = /^juno1[0-9a-z]{38,}$/;
+    if (!junoAddressRegex.test(formData.beneficiary)) {
       toast({
         title: "Invalid Address",
-        description: "Beneficiary address must be a valid Cosmos/Juno address.",
+        description: "Beneficiary must be a valid Juno address (juno1...).",
         variant: "destructive",
       });
       return;
     }
 
-    if (!cosmosAddressRegex.test(formData.approver1)) {
+    if (!junoAddressRegex.test(formData.approver1)) {
       toast({
         title: "Invalid Address",
-        description: "Approver 1 address must be a valid Cosmos/Juno address.",
+        description: "Approver 1 must be a valid Juno address (juno1...).",
         variant: "destructive",
       });
       return;
     }
 
-    if (!cosmosAddressRegex.test(formData.approver2)) {
+    if (!junoAddressRegex.test(formData.approver2)) {
       toast({
         title: "Invalid Address",
-        description: "Approver 2 address must be a valid Cosmos/Juno address.",
+        description: "Approver 2 must be a valid Juno address (juno1...).",
         variant: "destructive",
       });
       return;
     }
 
-    if (formData.approver3 && !cosmosAddressRegex.test(formData.approver3)) {
+    if (formData.approver3 && !junoAddressRegex.test(formData.approver3)) {
       toast({
         title: "Invalid Address",
-        description: "Approver 3 address must be a valid Cosmos/Juno address.",
+        description: "Approver 3 must be a valid Juno address (juno1...).",
         variant: "destructive",
       });
       return;
@@ -92,6 +92,23 @@ export const CreateEscrow = ({ onCreateEscrow, isCreating }: CreateEscrowProps) 
       toast({
         title: "Invalid Amount",
         description: "Amount must be a positive number.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Ensure addresses are unique among beneficiary and approvers
+    const participants = [
+      formData.beneficiary.trim(),
+      formData.approver1.trim(),
+      formData.approver2.trim(),
+      ...(formData.approver3 ? [formData.approver3.trim()] : []),
+    ];
+    const uniqueCount = new Set(participants).size;
+    if (uniqueCount !== participants.length) {
+      toast({
+        title: "Duplicate Addresses",
+        description: "Beneficiary and approver addresses must be all different.",
         variant: "destructive",
       });
       return;
@@ -134,12 +151,12 @@ export const CreateEscrow = ({ onCreateEscrow, isCreating }: CreateEscrowProps) 
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="denom">Denomination</Label>
+                <Label htmlFor="denom">Currency</Label>
                 <Input
                   id="denom"
                   value={formData.denom}
-                  onChange={(e) => handleInputChange("denom", e.target.value)}
-                  placeholder="ujuno"
+                  readOnly
+                  disabled
                 />
               </div>
             </div>
