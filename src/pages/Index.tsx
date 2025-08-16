@@ -4,11 +4,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { WalletConnect } from "@/components/ui/WalletConnect";
 import { CreateEscrow, EscrowFormData } from "@/components/CreateEscrow";
 import { EscrowList, EscrowData } from "@/components/EscrowList";
-import { Shield, Plus, List, Coins } from "lucide-react";
+import { Globe, Plus, List, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { CosmWasmClient, SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 import { OfflineSigner } from "@cosmjs/proto-signing";
-import heroImage from "@/assets/escrow-hero.jpg";
+import heroImage from "@/assets/cosmos-hero.jpg";
+import planetIcon from "@/assets/planet-icon.png";
 
 const CONTRACT_ADDRESS = "juno1rs3zyzvascpnaad90hklf54x4unmt8da93m56flq7raqghfztvpsc2pcyv";
 const RPC_ENDPOINT = "https://rpc-juno.itastakers.com";
@@ -215,7 +216,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
+      {/* Cosmic Header */}
       <header 
         className="relative border-b border-border/50 bg-card/50 backdrop-blur-sm sticky top-0 z-50 overflow-hidden"
         style={{
@@ -229,21 +230,26 @@ const Index = () => {
         <div className="container mx-auto px-4 py-6 relative z-10">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-primary/20 backdrop-blur-sm border border-primary/30">
-                <Shield className="h-8 w-8 text-primary" />
+              <div className="relative p-3 rounded-xl bg-primary/20 backdrop-blur-sm border border-primary/30 animate-float">
+                <img 
+                  src={planetIcon} 
+                  alt="Cosmos Planet" 
+                  className="h-8 w-8 opacity-80"
+                />
+                <div className="absolute inset-0 bg-gradient-cosmic opacity-20 rounded-xl animate-cosmic-glow"></div>
               </div>
               <div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
-                  Juno Escrow
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-primary via-primary/90 to-success bg-clip-text text-transparent">
+                  Cosmos Escrow
                 </h1>
                 <p className="text-sm text-muted-foreground">
-                  Secure multi-party agreements on blockchain
+                  Interchain secure agreements
                 </p>
               </div>
             </div>
             <div className="flex items-center gap-2 text-xs text-muted-foreground bg-card/50 px-3 py-2 rounded-lg backdrop-blur-sm border border-border/50">
-              <Coins className="h-4 w-4 text-primary" />
-              <span>Juno Network</span>
+              <Sparkles className="h-4 w-4 text-primary" />
+              <span>Cosmos Hub</span>
             </div>
           </div>
         </div>
@@ -261,67 +267,75 @@ const Index = () => {
         ) : (
           <div className="space-y-6">
             {/* Wallet Status */}
-            <WalletConnect
-              onConnect={handleWalletConnect}
-              isConnected={isConnected}
-              address={walletAddress}
-            />
+            <div className="animate-fade-in">
+              <WalletConnect
+                onConnect={handleWalletConnect}
+                isConnected={isConnected}
+                address={walletAddress}
+              />
+            </div>
 
             {/* Main Content */}
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-              <TabsList className="grid w-full grid-cols-2 bg-card/50">
-                <TabsTrigger value="create" className="flex items-center gap-2">
-                  <Plus className="h-4 w-4" />
-                  Create Escrow
-                </TabsTrigger>
-                <TabsTrigger value="escrows" className="flex items-center gap-2">
-                  <List className="h-4 w-4" />
-                  My Escrows
-                </TabsTrigger>
-              </TabsList>
+            <div className="animate-fade-in">
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+                <TabsList className="grid w-full grid-cols-2 bg-card/50">
+                  <TabsTrigger value="create" className="flex items-center gap-2">
+                    <Plus className="h-4 w-4" />
+                    Create Escrow
+                  </TabsTrigger>
+                  <TabsTrigger value="escrows" className="flex items-center gap-2">
+                    <List className="h-4 w-4" />
+                    My Escrows
+                  </TabsTrigger>
+                </TabsList>
 
-              <TabsContent value="create" className="space-y-6">
-                <CreateEscrow
-                  onCreateEscrow={handleCreateEscrow}
-                  isCreating={isCreating}
-                />
-              </TabsContent>
+                <TabsContent value="create" className="space-y-6 animate-fade-in">
+                  <CreateEscrow
+                    onCreateEscrow={handleCreateEscrow}
+                    isCreating={isCreating}
+                  />
+                </TabsContent>
 
-              <TabsContent value="escrows" className="space-y-6">
-                <Card className="card-gradient">
-                  <CardHeader>
-                    <CardTitle className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <List className="h-5 w-5 text-primary" />
-                        My Escrows
-                      </div>
-                      <span className="text-sm font-normal text-muted-foreground">
-                        {escrows.length} total
-                      </span>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <EscrowList
-                      escrows={escrows}
-                      currentAddress={walletAddress}
-                      onApprove={handleApproveEscrow}
-                      onCancel={handleCancelEscrow}
-                      isLoading={isLoading}
-                    />
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            </Tabs>
+                <TabsContent value="escrows" className="space-y-6 animate-fade-in">
+                  <Card className="card-gradient">
+                    <CardHeader>
+                      <CardTitle className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <List className="h-5 w-5 text-primary" />
+                          My Escrows
+                        </div>
+                        <span className="text-sm font-normal text-muted-foreground">
+                          {escrows.length} total
+                        </span>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <EscrowList
+                        escrows={escrows}
+                        currentAddress={walletAddress}
+                        onApprove={handleApproveEscrow}
+                        onCancel={handleCancelEscrow}
+                        isLoading={isLoading}
+                      />
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+              </Tabs>
+            </div>
           </div>
         )}
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-border/50 bg-card/30 mt-12">
-        <div className="container mx-auto px-4 py-6">
+      <footer className="border-t border-border/50 bg-card/30 mt-12 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-cosmic opacity-5"></div>
+        <div className="container mx-auto px-4 py-6 relative z-10">
           <div className="text-center text-sm text-muted-foreground">
-            <p>Secure escrow service powered by Juno blockchain</p>
-            <p className="mt-1">Contract: {`${CONTRACT_ADDRESS.slice(0, 10)}...${CONTRACT_ADDRESS.slice(-8)}`}</p>
+            <p>Interchain escrow service powered by Cosmos ecosystem</p>
+            <p className="mt-1">Currently deployed on Juno • Coming to Cosmos Hub</p>
+            <p className="mt-1 font-mono text-xs opacity-75">
+              Contract: {`${CONTRACT_ADDRESS.slice(0, 10)}...${CONTRACT_ADDRESS.slice(-8)}`}
+            </p>
           </div>
         </div>
       </footer>

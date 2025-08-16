@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Wallet, CheckCircle, AlertCircle } from "lucide-react";
+import { Wallet, CheckCircle, AlertCircle, Globe } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface WalletConnectProps {
@@ -66,21 +66,23 @@ export const WalletConnect = ({ onConnect, isConnected, address }: WalletConnect
   }
 
   return (
-    <Card className="p-6 text-center">
-      <div className="flex flex-col items-center gap-4">
-        <div className="p-4 rounded-full bg-primary/10">
+    <Card className="p-6 text-center relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-cosmic opacity-5"></div>
+      <div className="relative z-10 flex flex-col items-center gap-4">
+        <div className="p-4 rounded-full bg-primary/10 relative">
           <Wallet className="h-8 w-8 text-primary" />
+          <div className="absolute inset-0 bg-gradient-primary opacity-20 rounded-full"></div>
         </div>
         <div className="space-y-2">
           <h3 className="text-lg font-semibold">Connect Your Wallet</h3>
           <p className="text-sm text-muted-foreground">
-            Connect your Keplr wallet to interact with the escrow contract
+            Connect your Keplr wallet to interact with Cosmos ecosystem
           </p>
         </div>
         <Button
           onClick={connectKeplr}
           disabled={isConnecting}
-          className="btn-gradient-primary text-primary-foreground px-8"
+          className="btn-gradient-cosmic text-primary-foreground px-8"
         >
           {isConnecting ? (
             <>
@@ -89,7 +91,7 @@ export const WalletConnect = ({ onConnect, isConnected, address }: WalletConnect
             </>
           ) : (
             <>
-              <Wallet className="mr-2 h-4 w-4" />
+              <Globe className="mr-2 h-4 w-4" />
               Connect Keplr
             </>
           )}

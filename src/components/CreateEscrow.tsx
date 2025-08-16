@@ -48,39 +48,39 @@ export const CreateEscrow = ({ onCreateEscrow, isCreating }: CreateEscrowProps) 
       return;
     }
 
-    // Validate addresses (basic Juno address format)
-    const junoAddressRegex = /^juno[a-z0-9]{39}$/;
-    if (!junoAddressRegex.test(formData.beneficiary)) {
+    // Validate addresses (basic Cosmos address format - will work for Juno currently)
+    const cosmosAddressRegex = /^(juno|cosmos)[a-z0-9]{39}$/;
+    if (!cosmosAddressRegex.test(formData.beneficiary)) {
       toast({
         title: "Invalid Address",
-        description: "Beneficiary address must be a valid Juno address.",
+        description: "Beneficiary address must be a valid Cosmos/Juno address.",
         variant: "destructive",
       });
       return;
     }
 
-    if (!junoAddressRegex.test(formData.approver1)) {
+    if (!cosmosAddressRegex.test(formData.approver1)) {
       toast({
         title: "Invalid Address",
-        description: "Approver 1 address must be a valid Juno address.",
+        description: "Approver 1 address must be a valid Cosmos/Juno address.",
         variant: "destructive",
       });
       return;
     }
 
-    if (!junoAddressRegex.test(formData.approver2)) {
+    if (!cosmosAddressRegex.test(formData.approver2)) {
       toast({
         title: "Invalid Address",
-        description: "Approver 2 address must be a valid Juno address.",
+        description: "Approver 2 address must be a valid Cosmos/Juno address.",
         variant: "destructive",
       });
       return;
     }
 
-    if (formData.approver3 && !junoAddressRegex.test(formData.approver3)) {
+    if (formData.approver3 && !cosmosAddressRegex.test(formData.approver3)) {
       toast({
         title: "Invalid Address",
-        description: "Approver 3 address must be a valid Juno address.",
+        description: "Approver 3 address must be a valid Cosmos/Juno address.",
         variant: "destructive",
       });
       return;
@@ -157,7 +157,7 @@ export const CreateEscrow = ({ onCreateEscrow, isCreating }: CreateEscrowProps) 
                 <Label htmlFor="beneficiary">Beneficiary Address *</Label>
                 <Input
                   id="beneficiary"
-                  placeholder="juno1..."
+                  placeholder="juno1... or cosmos1..."
                   value={formData.beneficiary}
                   onChange={(e) => handleInputChange("beneficiary", e.target.value)}
                   required
@@ -171,7 +171,7 @@ export const CreateEscrow = ({ onCreateEscrow, isCreating }: CreateEscrowProps) 
                   <Label htmlFor="approver1">First Approver *</Label>
                   <Input
                     id="approver1"
-                    placeholder="juno1..."
+                    placeholder="juno1... or cosmos1..."
                     value={formData.approver1}
                     onChange={(e) => handleInputChange("approver1", e.target.value)}
                     required
@@ -182,7 +182,7 @@ export const CreateEscrow = ({ onCreateEscrow, isCreating }: CreateEscrowProps) 
                   <Label htmlFor="approver2">Second Approver *</Label>
                   <Input
                     id="approver2"
-                    placeholder="juno1..."
+                    placeholder="juno1... or cosmos1..."
                     value={formData.approver2}
                     onChange={(e) => handleInputChange("approver2", e.target.value)}
                     required
@@ -195,7 +195,7 @@ export const CreateEscrow = ({ onCreateEscrow, isCreating }: CreateEscrowProps) 
                 <Label htmlFor="approver3">Third Approver (Optional)</Label>
                 <Input
                   id="approver3"
-                  placeholder="juno1..."
+                  placeholder="juno1... or cosmos1..."
                   value={formData.approver3}
                   onChange={(e) => handleInputChange("approver3", e.target.value)}
                   className="font-mono text-sm"
@@ -220,7 +220,7 @@ export const CreateEscrow = ({ onCreateEscrow, isCreating }: CreateEscrowProps) 
           <Button
             type="submit"
             disabled={isCreating}
-            className="w-full btn-gradient-primary text-primary-foreground py-3"
+            className="w-full btn-gradient-cosmic text-primary-foreground py-3"
             size="lg"
           >
             {isCreating ? (

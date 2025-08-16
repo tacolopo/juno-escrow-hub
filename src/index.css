@@ -2,11 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Professional DeFi/Escrow Design System */
+/* Cosmic/Cosmos Design System */
 
 @layer base {
   :root {
-    /* Professional DeFi Color Palette */
+    /* Cosmic Color Palette inspired by space and nebulae */
     --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
 
@@ -16,21 +16,21 @@
     --popover: 240 10% 7%;
     --popover-foreground: 0 0% 95%;
 
-    /* Trust-building blue primary */
-    --primary: 221 83% 53%;
+    /* Cosmic purple-blue primary inspired by nebulae */
+    --primary: 258 90% 66%;
     --primary-foreground: 0 0% 98%;
-    --primary-hover: 221 83% 48%;
+    --primary-hover: 258 90% 61%;
 
-    /* Success green for approvals */
-    --success: 142 76% 36%;
+    /* Cosmic teal for success/approvals */
+    --success: 180 78% 46%;
     --success-foreground: 0 0% 98%;
-    --success-hover: 142 76% 31%;
+    --success-hover: 180 78% 41%;
 
-    /* Warning amber for pending */
-    --warning: 38 92% 50%;
+    /* Stellar gold for warnings/pending */
+    --warning: 45 93% 58%;
     --warning-foreground: 0 0% 98%;
 
-    /* Secondary neutral */
+    /* Deep space secondary */
     --secondary: 240 5% 21%;
     --secondary-foreground: 0 0% 98%;
 
@@ -45,21 +45,23 @@
 
     --border: 240 6% 20%;
     --input: 240 6% 20%;
-    --ring: 221 83% 53%;
+    --ring: 258 90% 66%;
 
     --radius: 0.75rem;
 
-    /* Gradients for modern appeal */
-    --gradient-primary: linear-gradient(135deg, hsl(221 83% 53%), hsl(221 83% 48%));
-    --gradient-success: linear-gradient(135deg, hsl(142 76% 36%), hsl(142 76% 31%));
+    /* Cosmic gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(258 90% 66%), hsl(258 90% 61%));
+    --gradient-success: linear-gradient(135deg, hsl(180 78% 46%), hsl(180 78% 41%));
+    --gradient-cosmic: linear-gradient(135deg, hsl(258 90% 66%), hsl(280 90% 66%), hsl(180 78% 46%));
     --gradient-card: linear-gradient(145deg, hsl(240 10% 7%), hsl(240 8% 8%));
     
-    /* Shadows for depth */
+    /* Cosmic shadows with purple glow */
     --shadow-card: 0 4px 12px -2px hsl(240 10% 3.9% / 0.3);
-    --shadow-primary: 0 8px 20px -4px hsl(221 83% 53% / 0.2);
-    --shadow-success: 0 8px 20px -4px hsl(142 76% 36% / 0.2);
+    --shadow-primary: 0 8px 20px -4px hsl(258 90% 66% / 0.3);
+    --shadow-success: 0 8px 20px -4px hsl(180 78% 46% / 0.3);
+    --shadow-cosmic: 0 12px 24px -4px hsl(258 90% 66% / 0.4);
 
-    /* Animations */
+    /* Smooth cosmic animations */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 
@@ -153,7 +155,7 @@
     box-shadow: var(--shadow-card);
   }
 
-  /* Primary gradient button */
+  /* Cosmic gradient button */
   .btn-gradient-primary {
     background: var(--gradient-primary);
     box-shadow: var(--shadow-primary);
@@ -162,10 +164,10 @@
 
   .btn-gradient-primary:hover {
     transform: translateY(-1px);
-    box-shadow: 0 12px 24px -4px hsl(221 83% 53% / 0.3);
+    box-shadow: 0 12px 24px -4px hsl(258 90% 66% / 0.4);
   }
 
-  /* Success gradient button */
+  /* Cosmic success gradient button */
   .btn-gradient-success {
     background: var(--gradient-success);
     box-shadow: var(--shadow-success);
@@ -174,7 +176,19 @@
 
   .btn-gradient-success:hover {
     transform: translateY(-1px);
-    box-shadow: 0 12px 24px -4px hsl(142 76% 36% / 0.3);
+    box-shadow: 0 12px 24px -4px hsl(180 78% 46% / 0.4);
+  }
+
+  /* Multi-color cosmic gradient */
+  .btn-gradient-cosmic {
+    background: var(--gradient-cosmic);
+    box-shadow: var(--shadow-cosmic);
+    transition: var(--transition-smooth);
+  }
+
+  .btn-gradient-cosmic:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-cosmic);
   }
 
   /* Status indicators */
