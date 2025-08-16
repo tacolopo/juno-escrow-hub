@@ -1,12 +1,330 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { WalletConnect } from "@/components/ui/WalletConnect";
+import { CreateEscrow, EscrowFormData } from "@/components/CreateEscrow";
+import { EscrowList, EscrowData } from "@/components/EscrowList";
+import { Shield, Plus, List, Coins } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { CosmWasmClient, SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
+import { OfflineSigner } from "@cosmjs/proto-signing";
+import heroImage from "@/assets/escrow-hero.jpg";
+
+const CONTRACT_ADDRESS = "juno1rs3zyzvascpnaad90hklf54x4unmt8da93m56flq7raqghfztvpsc2pcyv";
+const RPC_ENDPOINT = "https://rpc-juno.itastakers.com";
 
 const Index = () => {
+  const [isConnected, setIsConnected] = useState(false);
+  const [walletAddress, setWalletAddress] = useState<string>("");
+  const [escrows, setEscrows] = useState<EscrowData[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
+  const [activeTab, setActiveTab] = useState("create");
+  
+  const { toast } = useToast();
+
+  // Initialize CosmWasm client
+  const getQueryClient = async () => {
+    return await CosmWasmClient.connect(RPC_ENDPOINT);
+  };
+
+  const getSigningClient = async (): Promise<SigningCosmWasmClient> => {
+    if (!window.keplr) {
+      throw new Error("Keplr not found");
+    }
+
+    await window.keplr.enable("juno-1");
+    const offlineSigner = window.keplr.getOfflineSignerAuto("juno-1") as OfflineSigner;
+    
+    return await SigningCosmWasmClient.connectWithSigner(RPC_ENDPOINT, offlineSigner);
+  };
+
+  // Load escrows for connected wallet
+  const loadEscrows = async () => {
+    if (!walletAddress) return;
+    
+    setIsLoading(true);
+    try {
+      const client = await getQueryClient();
+      const result = await client.queryContractSmart(CONTRACT_ADDRESS, {
+        get_escrows_by_address: {
+          address: walletAddress,
+          limit: 50
+        }
+      });
+      
+      setEscrows(result.escrows || []);
+    } catch (error) {
+      console.error("Failed to load escrows:", error);
+      toast({
+        title: "Failed to Load Escrows",
+        description: "Could not fetch escrows from the blockchain.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Create new escrow
+  const handleCreateEscrow = async (formData: EscrowFormData) => {
+    if (!walletAddress) return;
+    
+    setIsCreating(true);
+    try {
+      const client = await getSigningClient();
+      
+      // Convert amount to micro units
+      const amountInMicroUnits = Math.floor(parseFloat(formData.amount) * 1000000).toString();
+      
+      const msg = {
+        create_escrow: {
+          beneficiary: formData.beneficiary,
+          approver1: formData.approver1,
+          approver2: formData.approver2,
+          approver3: formData.approver3 || undefined,
+          description: formData.description,
+        }
+      };
+
+      const funds = [{
+        amount: amountInMicroUnits,
+        denom: formData.denom
+      }];
+
+      const result = await client.execute(
+        walletAddress,
+        CONTRACT_ADDRESS,
+        msg,
+        "auto",
+        undefined,
+        funds
+      );
+
+      console.log("Escrow created:", result);
+      
+      toast({
+        title: "Escrow Created",
+        description: "Your escrow has been successfully created on the blockchain.",
+      });
+
+      // Switch to escrows tab and reload
+      setActiveTab("escrows");
+      await loadEscrows();
+      
+    } catch (error) {
+      console.error("Failed to create escrow:", error);
+      toast({
+        title: "Failed to Create Escrow",
+        description: "Could not create escrow. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
+  // Approve escrow release
+  const handleApproveEscrow = async (escrowId: number) => {
+    if (!walletAddress) return;
+    
+    try {
+      const client = await getSigningClient();
+      
+      const msg = {
+        approve_release: {
+          escrow_id: escrowId
+        }
+      };
+
+      await client.execute(
+        walletAddress,
+        CONTRACT_ADDRESS,
+        msg,
+        "auto"
+      );
+
+      toast({
+        title: "Approval Submitted",
+        description: "Your approval has been recorded on the blockchain.",
+      });
+
+      // Reload escrows
+      await loadEscrows();
+      
+    } catch (error) {
+      console.error("Failed to approve escrow:", error);
+      toast({
+        title: "Failed to Approve",
+        description: "Could not submit approval. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Cancel escrow
+  const handleCancelEscrow = async (escrowId: number) => {
+    if (!walletAddress) return;
+    
+    try {
+      const client = await getSigningClient();
+      
+      const msg = {
+        cancel_escrow: {
+          escrow_id: escrowId
+        }
+      };
+
+      await client.execute(
+        walletAddress,
+        CONTRACT_ADDRESS,
+        msg,
+        "auto"
+      );
+
+      toast({
+        title: "Escrow Cancelled",
+        description: "The escrow has been cancelled and funds returned.",
+      });
+
+      // Reload escrows
+      await loadEscrows();
+      
+    } catch (error) {
+      console.error("Failed to cancel escrow:", error);
+      toast({
+        title: "Failed to Cancel",
+        description: "Could not cancel escrow. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Handle wallet connection
+  const handleWalletConnect = (address: string) => {
+    setWalletAddress(address);
+    setIsConnected(true);
+  };
+
+  // Load escrows when wallet connects
+  useEffect(() => {
+    if (isConnected && walletAddress) {
+      loadEscrows();
+    }
+  }, [isConnected, walletAddress]);
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <header 
+        className="relative border-b border-border/50 bg-card/50 backdrop-blur-sm sticky top-0 z-50 overflow-hidden"
+        style={{
+          backgroundImage: `linear-gradient(rgba(240, 240, 240, 0.02), rgba(240, 240, 240, 0.02)), url(${heroImage})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
+      >
+        <div className="absolute inset-0 bg-background/95 backdrop-blur-sm"></div>
+        <div className="container mx-auto px-4 py-6 relative z-10">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="p-3 rounded-xl bg-primary/20 backdrop-blur-sm border border-primary/30">
+                <Shield className="h-8 w-8 text-primary" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+                  Juno Escrow
+                </h1>
+                <p className="text-sm text-muted-foreground">
+                  Secure multi-party agreements on blockchain
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 text-xs text-muted-foreground bg-card/50 px-3 py-2 rounded-lg backdrop-blur-sm border border-border/50">
+              <Coins className="h-4 w-4 text-primary" />
+              <span>Juno Network</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main className="container mx-auto px-4 py-8 max-w-4xl">
+        {!isConnected ? (
+          <div className="max-w-md mx-auto">
+            <WalletConnect
+              onConnect={handleWalletConnect}
+              isConnected={isConnected}
+              address={walletAddress}
+            />
+          </div>
+        ) : (
+          <div className="space-y-6">
+            {/* Wallet Status */}
+            <WalletConnect
+              onConnect={handleWalletConnect}
+              isConnected={isConnected}
+              address={walletAddress}
+            />
+
+            {/* Main Content */}
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+              <TabsList className="grid w-full grid-cols-2 bg-card/50">
+                <TabsTrigger value="create" className="flex items-center gap-2">
+                  <Plus className="h-4 w-4" />
+                  Create Escrow
+                </TabsTrigger>
+                <TabsTrigger value="escrows" className="flex items-center gap-2">
+                  <List className="h-4 w-4" />
+                  My Escrows
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="create" className="space-y-6">
+                <CreateEscrow
+                  onCreateEscrow={handleCreateEscrow}
+                  isCreating={isCreating}
+                />
+              </TabsContent>
+
+              <TabsContent value="escrows" className="space-y-6">
+                <Card className="card-gradient">
+                  <CardHeader>
+                    <CardTitle className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <List className="h-5 w-5 text-primary" />
+                        My Escrows
+                      </div>
+                      <span className="text-sm font-normal text-muted-foreground">
+                        {escrows.length} total
+                      </span>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <EscrowList
+                      escrows={escrows}
+                      currentAddress={walletAddress}
+                      onApprove={handleApproveEscrow}
+                      onCancel={handleCancelEscrow}
+                      isLoading={isLoading}
+                    />
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            </Tabs>
+          </div>
+        )}
+      </main>
+
+      {/* Footer */}
+      <footer className="border-t border-border/50 bg-card/30 mt-12">
+        <div className="container mx-auto px-4 py-6">
+          <div className="text-center text-sm text-muted-foreground">
+            <p>Secure escrow service powered by Juno blockchain</p>
+            <p className="mt-1">Contract: {`${CONTRACT_ADDRESS.slice(0, 10)}...${CONTRACT_ADDRESS.slice(-8)}`}</p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };
