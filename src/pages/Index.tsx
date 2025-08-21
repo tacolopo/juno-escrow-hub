@@ -22,8 +22,25 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [activeTab, setActiveTab] = useState("create");
+  const [isCopied, setIsCopied] = useState(false);
   
   const { toast } = useToast();
+
+  // Handle donation address copy
+  const handleCopyDonationAddress = async () => {
+    try {
+      await navigator.clipboard.writeText('cosmos1qa6supftg80qh93u6894lsg4q4m25ftgfsadtw');
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000); // Reset after 2 seconds
+    } catch (error) {
+      console.error('Failed to copy address:', error);
+      toast({
+        title: "Copy Failed",
+        description: "Could not copy address to clipboard.",
+        variant: "destructive",
+      });
+    }
+  };
 
   // Initialize CosmWasm client
   const getQueryClient = async () => {
@@ -355,16 +372,23 @@ const Index = () => {
               <p className="text-xs text-muted-foreground/80 mb-2">
                 Donations appreciated to support this free service ✨
               </p>
-              <div className="flex items-center justify-center gap-2 bg-card/50 rounded-lg px-3 py-2 max-w-md mx-auto">
+              <div className="flex items-center justify-center gap-2 bg-card/50 rounded-lg px-3 py-2 max-w-md mx-auto transition-all duration-200">
                 <span className="text-xs font-mono text-primary/80 break-all">
                   cosmos1qa6supftg80qh93u6894lsg4q4m25ftgfsadtw
                 </span>
                 <button 
-                  onClick={() => navigator.clipboard.writeText('cosmos1qa6supftg80qh93u6894lsg4q4m25ftgfsadtw')}
-                  className="text-xs text-muted-foreground hover:text-primary transition-colors"
-                  title="Copy donation address"
+                  onClick={handleCopyDonationAddress}
+                  className="text-xs text-muted-foreground hover:text-primary transition-colors flex items-center gap-1"
+                  title={isCopied ? "Address copied!" : "Copy donation address"}
                 >
-                  📋
+                  {isCopied ? (
+                    <>
+                      <span className="text-green-500">✓</span>
+                      <span className="text-green-500 text-xs">copied!</span>
+                    </>
+                  ) : (
+                    "📋"
+                  )}
                 </button>
               </div>
             </div>
