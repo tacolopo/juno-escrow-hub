@@ -343,12 +343,31 @@ const Index = () => {
       <footer className="border-t border-border/50 bg-card/30 mt-12 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-cosmic opacity-5"></div>
         <div className="container mx-auto px-4 py-6 relative z-10">
-          <div className="text-center text-sm text-muted-foreground">
+          <div className="text-center text-sm text-muted-foreground space-y-3">
             <p>Interchain escrow service powered by Cosmos ecosystem</p>
             <p className="mt-1">Currently deployed on Cosmos Hub • Secure interchain escrows</p>
             <p className="mt-1 font-mono text-xs opacity-75">
               Contract: {`${CONTRACT_ADDRESS.slice(0, 10)}...${CONTRACT_ADDRESS.slice(-8)}`}
             </p>
+            
+            {/* Donation Section */}
+            <div className="pt-4 border-t border-border/30">
+              <p className="text-xs text-muted-foreground/80 mb-2">
+                Donations appreciated to support this free service ✨
+              </p>
+              <div className="flex items-center justify-center gap-2 bg-card/50 rounded-lg px-3 py-2 max-w-md mx-auto">
+                <span className="text-xs font-mono text-primary/80 break-all">
+                  cosmos1qa6supftg80qh93u6894lsg4q4m25ftgfsadtw
+                </span>
+                <button 
+                  onClick={() => navigator.clipboard.writeText('cosmos1qa6supftg80qh93u6894lsg4q4m25ftgfsadtw')}
+                  className="text-xs text-muted-foreground hover:text-primary transition-colors"
+                  title="Copy donation address"
+                >
+                  📋
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </footer>
