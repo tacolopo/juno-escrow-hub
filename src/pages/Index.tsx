@@ -13,7 +13,7 @@ import heroImage from "@/assets/cosmos-hero.jpg";
 import planetIcon from "@/assets/planet-icon.png";
 
 const CONTRACT_ADDRESS = "cosmos1zp0zpa5y2upe8mqegp6e69x6tetyf953xgc3mjd95jx0mdc4ksmqy6l405";
-const RPC_ENDPOINT = "https://cosmos-rpc.quickapi.com:443";
+const RPC_ENDPOINT = "https://cosmoshub.tendermintrpc.lava.build:443";
 
 const Index = () => {
   const [isConnected, setIsConnected] = useState(false);
