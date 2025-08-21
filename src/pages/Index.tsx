@@ -12,8 +12,8 @@ import { OfflineSigner } from "@cosmjs/proto-signing";
 import heroImage from "@/assets/cosmos-hero.jpg";
 import planetIcon from "@/assets/planet-icon.png";
 
-const CONTRACT_ADDRESS = "juno1rs3zyzvascpnaad90hklf54x4unmt8da93m56flq7raqghfztvpsc2pcyv";
-const RPC_ENDPOINT = "https://juno-rpc.publicnode.com:443";
+const CONTRACT_ADDRESS = "cosmos1zp0zpa5y2upe8mqegp6e69x6tetyf953xgc3mjd95jx0mdc4ksmqy6l405";
+const RPC_ENDPOINT = "https://cosmos-rpc.quickapi.com:443";
 
 const Index = () => {
   const [isConnected, setIsConnected] = useState(false);
@@ -35,11 +35,11 @@ const Index = () => {
       throw new Error("Keplr not found");
     }
 
-    await window.keplr.enable("juno-1");
-    const offlineSigner = (await window.keplr.getOfflineSignerAuto("juno-1")) as OfflineSigner;
+    await window.keplr.enable("cosmoshub-4");
+    const offlineSigner = (await window.keplr.getOfflineSignerAuto("cosmoshub-4")) as OfflineSigner;
     
     return await SigningCosmWasmClient.connectWithSigner(RPC_ENDPOINT, offlineSigner, {
-      gasPrice: GasPrice.fromString("0.025ujuno"),
+      gasPrice: GasPrice.fromString("0.025uatom"),
     });
   };
 
@@ -93,7 +93,7 @@ const Index = () => {
 
       const funds = [{
         amount: amountInMicroUnits,
-        denom: "ujuno"
+        denom: "uatom"
       }];
 
       const result = await client.execute(
@@ -345,7 +345,7 @@ const Index = () => {
         <div className="container mx-auto px-4 py-6 relative z-10">
           <div className="text-center text-sm text-muted-foreground">
             <p>Interchain escrow service powered by Cosmos ecosystem</p>
-            <p className="mt-1">Currently deployed on Juno • Coming to Cosmos Hub</p>
+            <p className="mt-1">Currently deployed on Cosmos Hub • Secure interchain escrows</p>
             <p className="mt-1 font-mono text-xs opacity-75">
               Contract: {`${CONTRACT_ADDRESS.slice(0, 10)}...${CONTRACT_ADDRESS.slice(-8)}`}
             </p>

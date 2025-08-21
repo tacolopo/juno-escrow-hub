@@ -27,11 +27,11 @@ export const WalletConnect = ({ onConnect, onDisconnect, isConnected, address }:
 
     setIsConnecting(true);
     try {
-      // Request access to Juno testnet
-      await window.keplr.enable("juno-1");
+      // Request access to Cosmos Hub mainnet
+      await window.keplr.enable("cosmoshub-4");
       
       // Get the key from Keplr
-      const key = await window.keplr.getKey("juno-1");
+      const key = await window.keplr.getKey("cosmoshub-4");
       onConnect(key.bech32Address);
       
       toast({

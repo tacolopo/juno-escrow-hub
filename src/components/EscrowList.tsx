@@ -56,8 +56,8 @@ export const EscrowList = ({
   };
 
   const formatAmount = (amount: { amount: string; denom: string }) => {
-    const value = parseFloat(amount.amount) / 1000000; // micro ujuno -> JUNO
-    return `${value.toFixed(6)} JUNO`;
+    const value = parseFloat(amount.amount) / 1000000; // micro uatom -> ATOM
+    return `${value.toFixed(6)} ATOM`;
   };
 
   const formatDate = (timestamp: number) => {

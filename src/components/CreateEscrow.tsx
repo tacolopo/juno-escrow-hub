@@ -19,7 +19,7 @@ export interface EscrowFormData {
   approver3?: string;
   description: string;
   amount: string;
-  denom: string; // Display-only in UI (always JUNO)
+  denom: string; // Display-only in UI (always ATOM)
 }
 
 export const CreateEscrow = ({ onCreateEscrow, isCreating }: CreateEscrowProps) => {
@@ -30,7 +30,7 @@ export const CreateEscrow = ({ onCreateEscrow, isCreating }: CreateEscrowProps) 
     approver3: "",
     description: "",
     amount: "",
-    denom: "JUNO"
+    denom: "ATOM"
   });
 
   const { toast } = useToast();
@@ -48,39 +48,39 @@ export const CreateEscrow = ({ onCreateEscrow, isCreating }: CreateEscrowProps) 
       return;
     }
 
-    // Validate addresses for Juno mainnet (bech32 with hrp 'juno')
-    const junoAddressRegex = /^juno1[0-9a-z]{38,}$/;
-    if (!junoAddressRegex.test(formData.beneficiary)) {
+    // Validate addresses for Cosmos Hub mainnet (bech32 with hrp 'cosmos')
+    const cosmosAddressRegex = /^cosmos1[0-9a-z]{38,}$/;
+    if (!cosmosAddressRegex.test(formData.beneficiary)) {
       toast({
         title: "Invalid Address",
-        description: "Beneficiary must be a valid Juno address (juno1...).",
+        description: "Beneficiary must be a valid Cosmos address (cosmos1...).",
         variant: "destructive",
       });
       return;
     }
 
-    if (!junoAddressRegex.test(formData.approver1)) {
+    if (!cosmosAddressRegex.test(formData.approver1)) {
       toast({
         title: "Invalid Address",
-        description: "Approver 1 must be a valid Juno address (juno1...).",
+        description: "Approver 1 must be a valid Cosmos address (cosmos1...).",
         variant: "destructive",
       });
       return;
     }
 
-    if (!junoAddressRegex.test(formData.approver2)) {
+    if (!cosmosAddressRegex.test(formData.approver2)) {
       toast({
         title: "Invalid Address",
-        description: "Approver 2 must be a valid Juno address (juno1...).",
+        description: "Approver 2 must be a valid Cosmos address (cosmos1...).",
         variant: "destructive",
       });
       return;
     }
 
-    if (formData.approver3 && !junoAddressRegex.test(formData.approver3)) {
+    if (formData.approver3 && !cosmosAddressRegex.test(formData.approver3)) {
       toast({
         title: "Invalid Address",
-        description: "Approver 3 must be a valid Juno address (juno1...).",
+        description: "Approver 3 must be a valid Cosmos address (cosmos1...).",
         variant: "destructive",
       });
       return;
@@ -157,7 +157,7 @@ export const CreateEscrow = ({ onCreateEscrow, isCreating }: CreateEscrowProps) 
                 <Label htmlFor="beneficiary">Beneficiary Address *</Label>
                 <Input
                   id="beneficiary"
-                  placeholder="juno1..."
+                  placeholder="cosmos1..."
                   value={formData.beneficiary}
                   onChange={(e) => handleInputChange("beneficiary", e.target.value)}
                   required
@@ -171,7 +171,7 @@ export const CreateEscrow = ({ onCreateEscrow, isCreating }: CreateEscrowProps) 
                   <Label htmlFor="approver1">First Approver *</Label>
                   <Input
                     id="approver1"
-                    placeholder="juno1..."
+                    placeholder="cosmos1..."
                     value={formData.approver1}
                     onChange={(e) => handleInputChange("approver1", e.target.value)}
                     required
@@ -182,7 +182,7 @@ export const CreateEscrow = ({ onCreateEscrow, isCreating }: CreateEscrowProps) 
                   <Label htmlFor="approver2">Second Approver *</Label>
                   <Input
                     id="approver2"
-                    placeholder="juno1..."
+                    placeholder="cosmos1..."
                     value={formData.approver2}
                     onChange={(e) => handleInputChange("approver2", e.target.value)}
                     required
@@ -195,7 +195,7 @@ export const CreateEscrow = ({ onCreateEscrow, isCreating }: CreateEscrowProps) 
                 <Label htmlFor="approver3">Third Approver (Optional)</Label>
                 <Input
                   id="approver3"
-                  placeholder="juno1... or cosmos1..."
+                  placeholder="cosmos1..."
                   value={formData.approver3}
                   onChange={(e) => handleInputChange("approver3", e.target.value)}
                   className="font-mono text-sm"
