@@ -197,23 +197,87 @@ const SolanaEscrow = () => {
     }
   };
 
-  // Simple parser for escrow data (production would use proper borsh)
+  // Parser for escrow data using Borsh format
   const parseEscrowData = (data: Uint8Array, id: number): SolanaEscrowData | null => {
     try {
-      // This is a placeholder parser - actual implementation needs borsh
+      if (data.length < 8) return null;
+      
+      const view = new DataView(data.buffer, data.byteOffset, data.byteLength);
+      let offset = 0;
+
+      // id: u64
+      const escrowId = Number(view.getBigUint64(offset, true));
+      offset += 8;
+
+      // creator: Pubkey (32 bytes)
+      const creator = new PublicKey(data.slice(offset, offset + 32)).toBase58();
+      offset += 32;
+
+      // beneficiary: Pubkey (32 bytes)
+      const beneficiary = new PublicKey(data.slice(offset, offset + 32)).toBase58();
+      offset += 32;
+
+      // amount: u64
+      const amount_lamports = Number(view.getBigUint64(offset, true));
+      offset += 8;
+
+      // approver1: Pubkey (32 bytes)
+      const approver1 = new PublicKey(data.slice(offset, offset + 32)).toBase58();
+      offset += 32;
+
+      // approver2: Pubkey (32 bytes)
+      const approver2 = new PublicKey(data.slice(offset, offset + 32)).toBase58();
+      offset += 32;
+
+      // approver3: Option<Pubkey> (1 byte + optional 32 bytes)
+      const hasApprover3 = data[offset] === 1;
+      offset += 1;
+      let approver3: string | null = null;
+      if (hasApprover3) {
+        approver3 = new PublicKey(data.slice(offset, offset + 32)).toBase58();
+        offset += 32;
+      }
+
+      // description: String (4 bytes length + data)
+      const descLength = view.getUint32(offset, true);
+      offset += 4;
+      const description = new TextDecoder().decode(data.slice(offset, offset + descLength));
+      offset += descLength;
+
+      // approvals: Vec<Pubkey> (4 bytes length + 32 bytes per entry)
+      const approvalsCount = view.getUint32(offset, true);
+      offset += 4;
+      const approvals: string[] = [];
+      for (let i = 0; i < approvalsCount; i++) {
+        approvals.push(new PublicKey(data.slice(offset, offset + 32)).toBase58());
+        offset += 32;
+      }
+
+      // is_completed: bool (1 byte)
+      const is_completed = data[offset] === 1;
+      offset += 1;
+
+      // created_at: i64
+      const created_at = Number(view.getBigInt64(offset, true));
+      offset += 8;
+
+      // completed_at: i64
+      const completed_at = Number(view.getBigInt64(offset, true));
+      offset += 8;
+
       return {
-        id,
-        creator: "", // Parse from data
-        beneficiary: "",
-        amount_lamports: 0,
-        approver1: "",
-        approver2: "",
-        approver3: null,
-        description: "",
-        approvals: [],
-        is_completed: false,
-        created_at: Date.now() / 1000,
-        completed_at: null
+        id: escrowId,
+        creator,
+        beneficiary,
+        amount_lamports,
+        approver1,
+        approver2,
+        approver3,
+        description,
+        approvals,
+        is_completed,
+        created_at,
+        completed_at: completed_at === 0 ? null : completed_at
       };
     } catch (error) {
       console.error("Failed to parse escrow data:", error);
