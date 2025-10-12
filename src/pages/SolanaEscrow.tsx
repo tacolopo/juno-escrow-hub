@@ -19,6 +19,19 @@ import {
   TransactionInstruction
 } from "@solana/web3.js";
 
+// Helper to convert string to Uint8Array (browser-native, no Buffer needed)
+const stringToUint8Array = (str: string): Uint8Array => {
+  return new TextEncoder().encode(str);
+};
+
+// Helper to convert number to little-endian Uint8Array
+const numberToLEBytes = (num: number | bigint): Uint8Array => {
+  const arr = new Uint8Array(8);
+  const view = new DataView(arr.buffer);
+  view.setBigUint64(0, BigInt(num), true); // true = little endian
+  return arr;
+};
+
 const PROGRAM_ID = new PublicKey("CzxXQzXVUBSmmj2kAhERmb8spjHAd31cVMYCXfYpKDM3");
 const SOLANA_RPC = "https://api.devnet.solana.com";
 
@@ -59,7 +72,7 @@ const SolanaEscrow = () => {
       
       // Find counter PDA
       const [counterPda] = PublicKey.findProgramAddressSync(
-        [Buffer.from("counter")],
+        [stringToUint8Array("counter")],
         PROGRAM_ID
       );
 
@@ -79,8 +92,8 @@ const SolanaEscrow = () => {
             const escrowId = BigInt(i);
             const [escrowPda] = PublicKey.findProgramAddressSync(
               [
-                Buffer.from("escrow"),
-                Buffer.from(new BigUint64Array([escrowId]).buffer)
+                stringToUint8Array("escrow"),
+                numberToLEBytes(escrowId)
               ],
               PROGRAM_ID
             );
@@ -140,7 +153,7 @@ const SolanaEscrow = () => {
   };
 
   // Simple parser for escrow data (production would use proper borsh)
-  const parseEscrowData = (data: Buffer, id: number): SolanaEscrowData | null => {
+  const parseEscrowData = (data: Uint8Array, id: number): SolanaEscrowData | null => {
     try {
       // This is a placeholder parser - actual implementation needs borsh
       return {
@@ -184,7 +197,7 @@ const SolanaEscrow = () => {
       
       // Find counter PDA
       const [counterPda] = PublicKey.findProgramAddressSync(
-        [Buffer.from("counter")],
+        [stringToUint8Array("counter")],
         PROGRAM_ID
       );
 
@@ -200,8 +213,8 @@ const SolanaEscrow = () => {
       // Find escrow PDA
       const [escrowPda] = PublicKey.findProgramAddressSync(
         [
-          Buffer.from("escrow"),
-          Buffer.from(new BigUint64Array([nextEscrowId]).buffer)
+          stringToUint8Array("escrow"),
+          numberToLEBytes(nextEscrowId)
         ],
         PROGRAM_ID
       );
@@ -213,9 +226,11 @@ const SolanaEscrow = () => {
       const approver3Pubkey = formData.approver3 ? new PublicKey(formData.approver3) : null;
 
       // Build instruction data (this is simplified - production needs proper borsh serialization)
-      const instructionData = Buffer.from([
-        1, // CreateEscrow instruction
-        ...new BigUint64Array([BigInt(Math.floor(amountInLamports))]).buffer,
+      const instructionDiscriminator = new Uint8Array([1]); // CreateEscrow instruction
+      const amountBytes = numberToLEBytes(BigInt(Math.floor(amountInLamports)));
+      const instructionData = new Uint8Array([
+        ...instructionDiscriminator,
+        ...amountBytes,
         // Add other parameters...
       ]);
 
@@ -228,7 +243,7 @@ const SolanaEscrow = () => {
           { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
         ],
         programId: PROGRAM_ID,
-        data: instructionData,
+        data: Buffer.from(instructionData), // Convert Uint8Array to Buffer for compatibility
       });
 
       // Create transaction
