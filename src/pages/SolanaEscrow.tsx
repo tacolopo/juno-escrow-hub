@@ -221,7 +221,7 @@ const SolanaEscrow = () => {
             { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
           ],
           programId: PROGRAM_ID,
-          data: Buffer.from(new Uint8Array([0])), // 0 = Initialize instruction
+          data: new Uint8Array([0]) as Buffer, // 0 = Initialize instruction (cast for TS)
         });
         
         const initTx = new Transaction().add(initInstruction);
@@ -285,7 +285,7 @@ const SolanaEscrow = () => {
           { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
         ],
         programId: PROGRAM_ID,
-        data: Buffer.from(instructionData), // Convert Uint8Array to Buffer for compatibility
+        data: instructionData as Buffer, // Use Uint8Array directly (cast for TS)
       });
 
       // Create transaction
