@@ -439,8 +439,16 @@ const SolanaEscrow = () => {
 
       const beneficiaryPubkey = new PublicKey(escrowData.beneficiary);
 
+      console.log("\n=== Transaction Accounts ===");
+      console.log("1. Approver:", approverPubkey.toBase58(), "(signer, writable)");
+      console.log("2. Escrow:", escrowPda.toBase58(), "(writable)");
+      console.log("3. Beneficiary:", beneficiaryPubkey.toBase58(), "(writable)");
+      console.log("4. System Program:", SystemProgram.programId.toBase58());
+      console.log("Program ID:", PROGRAM_ID.toBase58());
+
       // Build ApproveRelease instruction (enum discriminator = 2)
       const instructionData = new Uint8Array([2]); // ApproveRelease has no additional data
+      console.log("Instruction data:", Array.from(instructionData));
 
       // Create instruction with correct account order (must match processor.rs)
       const instruction = new TransactionInstruction({
