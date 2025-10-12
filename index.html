@@ -3,9 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cosmos Escrow - Interchain Secure Agreements</title>
-    <meta name="description" content="Create secure escrow contracts on Cosmos blockchain with multi-signature approval system. Trustless interchain transactions for digital agreements and payments." />
-    <meta name="author" content="Cosmos Escrow" />
+    <title>Multi-Chain Escrow Hub - Cosmos & Cardano</title>
+    <meta name="description" content="Create secure escrow contracts on Cosmos and Cardano blockchains with multi-signature approval system. Trustless interchain transactions for digital agreements and payments." />
+    <meta name="author" content="Multi-Chain Escrow Hub" />
     <meta name="keywords" content="escrow, blockchain, cosmos, cosmwasm, interchain, multi-signature, secure payments, smart contracts, ATOM" />
 
     <meta property="og:title" content="Cosmos Escrow - Inter-Blockchain Communication Protocol" />
@@ -21,6 +21,10 @@
 
   <body>
     <div id="root"></div>
+    <script>
+      // Polyfill for Node.js globals needed by lucid-cardano
+      window.global = window;
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
