@@ -15,7 +15,10 @@ import planetIcon from "@/assets/planet-icon.png";
 const CONTRACT_ADDRESS = "cosmos1zp0zpa5y2upe8mqegp6e69x6tetyf953xgc3mjd95jx0mdc4ksmqy6l405";
 const RPC_ENDPOINT = "https://cosmoshub.tendermintrpc.lava.build:443";
 
-const Index = () => {
+import { useNavigate } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
+
+const CosmosEscrow = () => {
   const [isConnected, setIsConnected] = useState(false);
   const [walletAddress, setWalletAddress] = useState<string>("");
   const [escrows, setEscrows] = useState<EscrowData[]>([]);
@@ -25,6 +28,7 @@ const Index = () => {
   const [isCopied, setIsCopied] = useState(false);
   
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   // Handle donation address copy
   const handleCopyDonationAddress = async () => {
@@ -250,6 +254,13 @@ const Index = () => {
         <div className="container mx-auto px-4 py-6 relative z-10">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
+              <button
+                onClick={() => navigate('/')}
+                className="p-2 rounded-lg bg-card/50 hover:bg-card transition-colors border border-border/50"
+                title="Back to home"
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </button>
               <div className="relative p-3 rounded-xl bg-primary/20 backdrop-blur-sm border border-primary/30 animate-float">
                 <img 
                   src={planetIcon} 
@@ -399,4 +410,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default CosmosEscrow;
