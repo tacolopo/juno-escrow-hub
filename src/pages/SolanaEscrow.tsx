@@ -423,10 +423,19 @@ const SolanaEscrow = () => {
         throw new Error("Escrow not found");
       }
 
+      console.log("Escrow PDA:", escrowPda.toBase58());
+      console.log("Escrow owner:", escrowInfo.owner.toBase58());
+      console.log("Escrow data length:", escrowInfo.data.length);
+
       const escrowData = parseEscrowData(escrowInfo.data, escrowId);
       if (!escrowData) {
         throw new Error("Could not parse escrow data");
       }
+
+      console.log("Parsed escrow:", escrowData);
+      console.log("Approver (current wallet):", walletAddress);
+      console.log("Is approver1:", escrowData.approver1 === walletAddress);
+      console.log("Is approver2:", escrowData.approver2 === walletAddress);
 
       const beneficiaryPubkey = new PublicKey(escrowData.beneficiary);
 
@@ -436,7 +445,7 @@ const SolanaEscrow = () => {
       // Create instruction with correct account order (must match processor.rs)
       const instruction = new TransactionInstruction({
         keys: [
-          { pubkey: approverPubkey, isSigner: true, isWritable: false }, // approver
+          { pubkey: approverPubkey, isSigner: true, isWritable: true }, // approver (writable for transaction fees)
           { pubkey: escrowPda, isSigner: false, isWritable: true }, // escrow account
           { pubkey: beneficiaryPubkey, isSigner: false, isWritable: true }, // beneficiary
           { pubkey: SystemProgram.programId, isSigner: false, isWritable: false }, // system program
