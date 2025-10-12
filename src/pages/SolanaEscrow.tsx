@@ -404,15 +404,73 @@ const SolanaEscrow = () => {
     if (!walletAddress || !walletProvider) return;
     
     try {
-      toast({
-        title: "Approval Transaction",
-        description: `Building approval transaction for escrow #${escrowId}`,
+      const connection = new Connection(SOLANA_RPC, "confirmed");
+      const approverPubkey = new PublicKey(walletAddress);
+      
+      // Find the escrow account
+      const escrowIdBigInt = BigInt(escrowId);
+      const [escrowPda] = PublicKey.findProgramAddressSync(
+        [
+          stringToUint8Array("escrow"),
+          numberToLEBytes(escrowIdBigInt)
+        ],
+        PROGRAM_ID
+      );
+
+      // Get escrow data to find beneficiary
+      const escrowInfo = await connection.getAccountInfo(escrowPda);
+      if (!escrowInfo) {
+        throw new Error("Escrow not found");
+      }
+
+      const escrowData = parseEscrowData(escrowInfo.data, escrowId);
+      if (!escrowData) {
+        throw new Error("Could not parse escrow data");
+      }
+
+      const beneficiaryPubkey = new PublicKey(escrowData.beneficiary);
+
+      // Build ApproveRelease instruction (enum discriminator = 2)
+      const instructionData = new Uint8Array([2]); // ApproveRelease has no additional data
+
+      // Create instruction with correct account order (must match processor.rs)
+      const instruction = new TransactionInstruction({
+        keys: [
+          { pubkey: approverPubkey, isSigner: true, isWritable: false }, // approver
+          { pubkey: escrowPda, isSigner: false, isWritable: true }, // escrow account
+          { pubkey: beneficiaryPubkey, isSigner: false, isWritable: true }, // beneficiary
+          { pubkey: SystemProgram.programId, isSigner: false, isWritable: false }, // system program
+        ],
+        programId: PROGRAM_ID,
+        data: instructionData as Buffer,
       });
 
-      // Similar transaction building as create, but for approve
-      // Implementation would follow same pattern as createEscrow
+      // Create transaction
+      const transaction = new Transaction().add(instruction);
+      transaction.feePayer = approverPubkey;
       
-      console.log("Approving escrow:", escrowId);
+      const { blockhash } = await connection.getLatestBlockhash();
+      transaction.recentBlockhash = blockhash;
+
+      toast({
+        title: "Approval Transaction",
+        description: "Please approve the transaction in your wallet",
+      });
+
+      // Sign and send transaction
+      const signed = await walletProvider.signTransaction(transaction);
+      const signature = await connection.sendRawTransaction(signed.serialize());
+      
+      // Confirm transaction
+      await connection.confirmTransaction(signature, "confirmed");
+
+      toast({
+        title: "Approval Submitted!",
+        description: `Transaction: ${signature.slice(0, 8)}...`,
+      });
+
+      // Reload escrows to update UI
+      await loadEscrows(walletAddress);
       
     } catch (error: any) {
       console.error("Failed to approve escrow:", error);
@@ -429,15 +487,59 @@ const SolanaEscrow = () => {
     if (!walletAddress || !walletProvider) return;
     
     try {
-      toast({
-        title: "Cancellation Transaction",
-        description: `Building cancellation transaction for escrow #${escrowId}`,
+      const connection = new Connection(SOLANA_RPC, "confirmed");
+      const creatorPubkey = new PublicKey(walletAddress);
+      
+      // Find the escrow account
+      const escrowIdBigInt = BigInt(escrowId);
+      const [escrowPda] = PublicKey.findProgramAddressSync(
+        [
+          stringToUint8Array("escrow"),
+          numberToLEBytes(escrowIdBigInt)
+        ],
+        PROGRAM_ID
+      );
+
+      // Build CancelEscrow instruction (enum discriminator = 3)
+      const instructionData = new Uint8Array([3]); // CancelEscrow has no additional data
+
+      // Create instruction with correct account order (must match processor.rs)
+      const instruction = new TransactionInstruction({
+        keys: [
+          { pubkey: creatorPubkey, isSigner: true, isWritable: true }, // creator
+          { pubkey: escrowPda, isSigner: false, isWritable: true }, // escrow account
+          { pubkey: SystemProgram.programId, isSigner: false, isWritable: false }, // system program
+        ],
+        programId: PROGRAM_ID,
+        data: instructionData as Buffer,
       });
 
-      // Similar transaction building as create, but for cancel
-      // Implementation would follow same pattern as createEscrow
+      // Create transaction
+      const transaction = new Transaction().add(instruction);
+      transaction.feePayer = creatorPubkey;
       
-      console.log("Cancelling escrow:", escrowId);
+      const { blockhash } = await connection.getLatestBlockhash();
+      transaction.recentBlockhash = blockhash;
+
+      toast({
+        title: "Cancellation Transaction",
+        description: "Please approve the transaction in your wallet",
+      });
+
+      // Sign and send transaction
+      const signed = await walletProvider.signTransaction(transaction);
+      const signature = await connection.sendRawTransaction(signed.serialize());
+      
+      // Confirm transaction
+      await connection.confirmTransaction(signature, "confirmed");
+
+      toast({
+        title: "Escrow Cancelled!",
+        description: `Funds refunded. Transaction: ${signature.slice(0, 8)}...`,
+      });
+
+      // Reload escrows to update UI
+      await loadEscrows(walletAddress);
       
     } catch (error: any) {
       console.error("Failed to cancel escrow:", error);
