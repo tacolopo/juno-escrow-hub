@@ -18,7 +18,6 @@ import {
   LAMPORTS_PER_SOL,
   TransactionInstruction
 } from "@solana/web3.js";
-
 // Helper to convert string to Uint8Array (browser-native, no Buffer needed)
 const stringToUint8Array = (str: string): Uint8Array => {
   return new TextEncoder().encode(str);
@@ -30,6 +29,52 @@ const numberToLEBytes = (num: number | bigint): Uint8Array => {
   const view = new DataView(arr.buffer);
   view.setBigUint64(0, BigInt(num), true); // true = little endian
   return arr;
+};
+
+// Helper to serialize CreateEscrow instruction manually (Borsh format)
+const serializeCreateEscrow = (
+  amount: bigint,
+  beneficiary: Uint8Array,
+  approver1: Uint8Array,
+  approver2: Uint8Array,
+  approver3: Uint8Array | null,
+  description: string
+): Uint8Array => {
+  const descBytes = stringToUint8Array(description);
+  const descLen = new Uint8Array(4);
+  new DataView(descLen.buffer).setUint32(0, descBytes.length, true); // little endian
+
+  const parts: Uint8Array[] = [
+    new Uint8Array([1]), // Enum discriminator for CreateEscrow
+    numberToLEBytes(amount), // u64
+    beneficiary, // 32 bytes
+    approver1, // 32 bytes
+    approver2, // 32 bytes
+  ];
+
+  // Option<Pubkey> - 1 byte discriminator + optional 32 bytes
+  if (approver3) {
+    parts.push(new Uint8Array([1])); // Some
+    parts.push(approver3);
+  } else {
+    parts.push(new Uint8Array([0])); // None
+  }
+
+  // String - 4 bytes length + string data
+  parts.push(descLen);
+  parts.push(descBytes);
+
+  // Calculate total length
+  const totalLength = parts.reduce((sum, part) => sum + part.length, 0);
+  const result = new Uint8Array(totalLength);
+  
+  let offset = 0;
+  for (const part of parts) {
+    result.set(part, offset);
+    offset += part.length;
+  }
+
+  return result;
 };
 
 const PROGRAM_ID = new PublicKey("CzxXQzXVUBSmmj2kAhERmb8spjHAd31cVMYCXfYpKDM3");
@@ -233,22 +278,23 @@ const SolanaEscrow = () => {
       const approver2Pubkey = new PublicKey(formData.approver2);
       const approver3Pubkey = formData.approver3 ? new PublicKey(formData.approver3) : null;
 
-      // Build instruction data (this is simplified - production needs proper borsh serialization)
-      const instructionDiscriminator = new Uint8Array([1]); // CreateEscrow instruction
-      const amountBytes = numberToLEBytes(BigInt(Math.floor(amountInLamports)));
-      const instructionData = new Uint8Array([
-        ...instructionDiscriminator,
-        ...amountBytes,
-        // Add other parameters...
-      ]);
+      // Build instruction data using manual Borsh serialization
+      const instructionData = serializeCreateEscrow(
+        BigInt(Math.floor(amountInLamports)),
+        beneficiaryPubkey.toBytes(),
+        approver1Pubkey.toBytes(),
+        approver2Pubkey.toBytes(),
+        approver3Pubkey ? approver3Pubkey.toBytes() : null,
+        formData.description
+      );
 
-      // Create instruction
+      // Create instruction with correct account order (must match processor.rs)
       const instruction = new TransactionInstruction({
         keys: [
-          { pubkey: escrowPda, isSigner: false, isWritable: true },
-          { pubkey: counterPda, isSigner: false, isWritable: true },
-          { pubkey: creatorPubkey, isSigner: true, isWritable: true },
-          { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
+          { pubkey: creatorPubkey, isSigner: true, isWritable: true }, // creator
+          { pubkey: escrowPda, isSigner: false, isWritable: true }, // escrow account
+          { pubkey: counterPda, isSigner: false, isWritable: true }, // counter
+          { pubkey: SystemProgram.programId, isSigner: false, isWritable: false }, // system program
         ],
         programId: PROGRAM_ID,
         data: instructionData as Buffer, // Use Uint8Array directly (cast for TS)
