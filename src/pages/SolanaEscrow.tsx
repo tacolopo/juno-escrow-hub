@@ -201,13 +201,55 @@ const SolanaEscrow = () => {
         PROGRAM_ID
       );
 
-      // Get counter to determine next escrow ID
-      const counterInfo = await connection.getAccountInfo(counterPda);
+      // Get counter to determine next escrow ID, initialize if needed
+      let counterInfo = await connection.getAccountInfo(counterPda);
+      let currentCount = 0;
+      
       if (!counterInfo) {
-        throw new Error("Counter not initialized. Please initialize the program first.");
+        // Counter not initialized, need to initialize it first
+        toast({
+          title: "Initializing Program",
+          description: "First time setup - initializing the escrow program counter...",
+        });
+        
+        console.log("Counter not initialized, initializing...");
+        
+        const initInstruction = new TransactionInstruction({
+          keys: [
+            { pubkey: counterPda, isSigner: false, isWritable: true },
+            { pubkey: creatorPubkey, isSigner: true, isWritable: true },
+            { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
+          ],
+          programId: PROGRAM_ID,
+          data: Buffer.from(new Uint8Array([0])), // 0 = Initialize instruction
+        });
+        
+        const initTx = new Transaction().add(initInstruction);
+        initTx.feePayer = creatorPubkey;
+        const { blockhash: initBlockhash } = await connection.getLatestBlockhash();
+        initTx.recentBlockhash = initBlockhash;
+        
+        // Sign and send initialization transaction
+        const signedInit = await walletProvider.signTransaction(initTx);
+        const initSig = await connection.sendRawTransaction(signedInit.serialize());
+        await connection.confirmTransaction(initSig, "confirmed");
+        
+        console.log("Counter initialized:", initSig);
+        
+        toast({
+          title: "Program Initialized",
+          description: "Counter initialized successfully. Creating escrow now...",
+        });
+        
+        // Fetch counter again after initialization
+        counterInfo = await connection.getAccountInfo(counterPda);
+        if (counterInfo && counterInfo.data.length >= 8) {
+          currentCount = Number(counterInfo.data.readBigUInt64LE(0));
+        }
+      } else {
+        currentCount = Number(counterInfo.data.readBigUInt64LE(0));
       }
       
-      const currentCount = Number(counterInfo.data.readBigUInt64LE(0));
       const nextEscrowId = BigInt(currentCount + 1);
       
       // Find escrow PDA
