@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import CosmosEscrow from "./pages/CosmosEscrow";
+import SolanaEscrow from "./pages/SolanaEscrow";
 import CardanoEscrow from "./pages/CardanoEscrow";
 import NotFound from "./pages/NotFound";
 
@@ -19,6 +20,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/cosmos" element={<CosmosEscrow />} />
+          <Route path="/solana" element={<SolanaEscrow />} />
           <Route path="/cardano" element={<CardanoEscrow />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

@@ -24,6 +24,18 @@ const Home = () => {
       path: "/cosmos"
     },
     {
+      id: "solana",
+      name: "Solana",
+      description: "High-performance escrows on Solana with native speed",
+      icon: "◎",
+      color: "from-purple-500 via-purple-600 to-pink-500",
+      bgColor: "bg-purple-500/5",
+      borderColor: "border-purple-500/30",
+      hoverBg: "hover:bg-purple-500/10",
+      currency: "SOL",
+      path: "/solana"
+    },
+    {
       id: "cardano",
       name: "Cardano",
       description: "Multi-signature escrows with Plutus smart contracts",
@@ -90,7 +102,7 @@ const Home = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {chains.map((chain) => (
               <Card
                 key={chain.id}
