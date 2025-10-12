@@ -10,44 +10,32 @@ const Home = () => {
   const navigate = useNavigate();
   const [hoveredChain, setHoveredChain] = useState<string | null>(null);
 
-  const chains = [
-    {
-      id: "cosmos",
-      name: "Cosmos Hub",
-      description: "Secure escrows on the Internet of Blockchains",
-      icon: "🌌",
-      color: "from-primary via-primary/90 to-success",
-      bgColor: "bg-primary/5",
-      borderColor: "border-primary/30",
-      hoverBg: "hover:bg-primary/10",
-      currency: "ATOM",
-      path: "/cosmos"
-    },
-    {
-      id: "solana",
-      name: "Solana",
-      description: "High-performance escrows on Solana with native speed",
-      icon: "◎",
-      color: "from-purple-500 via-purple-600 to-pink-500",
-      bgColor: "bg-purple-500/5",
-      borderColor: "border-purple-500/30",
-      hoverBg: "hover:bg-purple-500/10",
-      currency: "SOL",
-      path: "/solana"
-    },
-    {
-      id: "cardano",
-      name: "Cardano",
-      description: "Multi-signature escrows with Plutus smart contracts",
-      icon: "₳",
-      color: "from-blue-500 via-blue-600 to-cyan-500",
-      bgColor: "bg-blue-500/5",
-      borderColor: "border-blue-500/30",
-      hoverBg: "hover:bg-blue-500/10",
-      currency: "ADA",
-      path: "/cardano"
-    }
-  ];
+      const chains = [
+        {
+          id: "cosmos",
+          name: "Cosmos Hub",
+          description: "Secure escrows on the Internet of Blockchains",
+          icon: "🌌",
+          color: "from-primary via-primary/90 to-success",
+          bgColor: "bg-primary/5",
+          borderColor: "border-primary/30",
+          hoverBg: "hover:bg-primary/10",
+          currency: "ATOM",
+          path: "/cosmos"
+        },
+        {
+          id: "solana",
+          name: "Solana",
+          description: "High-performance escrows on Solana with native speed",
+          icon: "◎",
+          color: "from-purple-500 via-purple-600 to-pink-500",
+          bgColor: "bg-purple-500/5",
+          borderColor: "border-purple-500/30",
+          hoverBg: "hover:bg-purple-500/10",
+          currency: "SOL",
+          path: "/solana"
+        }
+      ];
 
   return (
     <div className="min-h-screen bg-background">
@@ -102,7 +90,7 @@ const Home = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
             {chains.map((chain) => (
               <Card
                 key={chain.id}
@@ -176,7 +164,7 @@ const Home = () => {
           <div className="mt-16 text-center space-y-8">
             <h3 className="text-xl font-semibold">Why Use Multi-Chain Escrow?</h3>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
               <Card className="card-gradient">
                 <CardHeader>
                   <CardTitle className="text-lg">🔒 Secure</CardTitle>
@@ -219,7 +207,7 @@ const Home = () => {
         <div className="absolute inset-0 bg-gradient-cosmic opacity-5"></div>
         <div className="container mx-auto px-4 py-6 relative z-10">
           <div className="text-center text-sm text-muted-foreground space-y-2">
-            <p>Multi-chain escrow service • Cosmos Hub & Cardano networks</p>
+            <p>Multi-chain escrow service • Cosmos Hub & Solana networks</p>
             <p className="text-xs opacity-75">
               Secure your agreements across multiple blockchain ecosystems
             </p>
