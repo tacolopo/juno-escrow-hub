@@ -1,0 +1,9 @@
+{
+  "script_address": "addr1wx3ueuc6rvyp9vxpz7y6nr7cu30g40wk723lwh42fq5ffwclf45nj",
+  "validator_hash": "59027e01000032323232323225333002323232323253323300830013",
+  "network": "mainnet",
+  "deployed_at": "2025-10-11 22:59:55 UTC",
+  "wallet_address": "addr1qx403qcm06j90uelxh6fljzyxsj6q0ysr409tgy985hyrzdvtg8p3navd5l2w9stde62kjr5kuc7nvswckrm4jeh304surkx3v",
+  "validator_type": "PlutusV2",
+  "contract_name": "CardanoScrow Escrow Validator"
+}

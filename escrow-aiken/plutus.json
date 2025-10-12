@@ -1,0 +1,216 @@
+{
+  "preamble": {
+    "title": "cosmocrow/escrow-aiken",
+    "description": "CardanoScrow - Multi-signature escrow smart contract for Cardano",
+    "version": "1.0.0",
+    "plutusVersion": "v2",
+    "compiler": {
+      "name": "Aiken",
+      "version": "v1.1.9+2217206"
+    },
+    "license": "MIT"
+  },
+  "validators": [
+    {
+      "title": "escrow.escrow_validator.spend",
+      "datum": {
+        "title": "datum_opt",
+        "schema": {
+          "$ref": "#/definitions/escrow~1types~1EscrowDatum"
+        }
+      },
+      "redeemer": {
+        "title": "redeemer",
+        "schema": {
+          "$ref": "#/definitions/escrow~1types~1EscrowRedeemer"
+        }
+      },
+      "compiledCode": "59027e0100003232323232322533300232323232325332330083001300937540042646644646464a66601c600600226464a666026602a0040082c6eb4c04c004c040dd50048a9998071803800899192999809980a8010020b1bad3013001301037540122c601c6ea802054ccc030c004c034dd5001099191919192999808980318091baa00c1323253330133370e6eb4c018c054dd50039bad30173015375401c2a6660260042002294052819198008029299980a29919980a98009bae3019301a301a301a301a30173754012294454ccc054c004dd7180c980d180d180d180d180d180b9baa00914a2264a66602c6016602e6ea80044c008dd7180d180c1baa00114a06032603460346034603460346034602e6ea8024dc7800899980a198011bac300530163754010466e3c0040092825114a044646600200200644a66603200229404cc894ccc060c0140085288998020020009bae301a001301b001333011300a30123754600260266ea801528251132323253330143370e6eb4c01cc058dd50041bad30183016375401e2a6660280062a666028004200229405280a50533301637586008602a6ea801c5288a5032323300100100622533301800114a026644a66602e66e3c0080145288998020020009bae3019001301a001375c602c602e60286ea8018ccc044c028c048dd5180098099baa0054a09448c054c058c058c058c058c058c058c058c058c0580048c050c054c054c054c054c054c054c054c054004dd618091809980998081baa300130103754014460240026020601c6ea800858dc3a4000601a002601a601c00260146ea8008dc3a40042c6014601600660120046010004601000260086ea8004526136565734aae7555cf2ab9f5742ae89",
+      "hash": "584e200269f826ae2b6de35acb306d8ef0b48900ca42d042d7f91d00"
+    },
+    {
+      "title": "escrow.escrow_validator.else",
+      "redeemer": {
+        "schema": {}
+      },
+      "compiledCode": "59027e0100003232323232322533300232323232325332330083001300937540042646644646464a66601c600600226464a666026602a0040082c6eb4c04c004c040dd50048a9998071803800899192999809980a8010020b1bad3013001301037540122c601c6ea802054ccc030c004c034dd5001099191919192999808980318091baa00c1323253330133370e6eb4c018c054dd50039bad30173015375401c2a6660260042002294052819198008029299980a29919980a98009bae3019301a301a301a301a30173754012294454ccc054c004dd7180c980d180d180d180d180d180b9baa00914a2264a66602c6016602e6ea80044c008dd7180d180c1baa00114a06032603460346034603460346034602e6ea8024dc7800899980a198011bac300530163754010466e3c0040092825114a044646600200200644a66603200229404cc894ccc060c0140085288998020020009bae301a001301b001333011300a30123754600260266ea801528251132323253330143370e6eb4c01cc058dd50041bad30183016375401e2a6660280062a666028004200229405280a50533301637586008602a6ea801c5288a5032323300100100622533301800114a026644a66602e66e3c0080145288998020020009bae3019001301a001375c602c602e60286ea8018ccc044c028c048dd5180098099baa0054a09448c054c058c058c058c058c058c058c058c058c0580048c050c054c054c054c054c054c054c054c054004dd618091809980998081baa300130103754014460240026020601c6ea800858dc3a4000601a002601a601c00260146ea8008dc3a40042c6014601600660120046010004601000260086ea8004526136565734aae7555cf2ab9f5742ae89",
+      "hash": "584e200269f826ae2b6de35acb306d8ef0b48900ca42d042d7f91d00"
+    }
+  ],
+  "definitions": {
+    "Address": {
+      "title": "Address",
+      "dataType": "bytes"
+    },
+    "Bool": {
+      "title": "Bool",
+      "anyOf": [
+        {
+          "title": "False",
+          "dataType": "constructor",
+          "index": 0,
+          "fields": []
+        },
+        {
+          "title": "True",
+          "dataType": "constructor",
+          "index": 1,
+          "fields": []
+        }
+      ]
+    },
+    "ByteArray": {
+      "dataType": "bytes"
+    },
+    "EscrowId": {
+      "title": "EscrowId",
+      "dataType": "integer"
+    },
+    "Int": {
+      "dataType": "integer"
+    },
+    "List$Address": {
+      "dataType": "list",
+      "items": {
+        "$ref": "#/definitions/Address"
+      }
+    },
+    "Option$Address": {
+      "title": "Option",
+      "anyOf": [
+        {
+          "title": "Some",
+          "description": "An optional value.",
+          "dataType": "constructor",
+          "index": 0,
+          "fields": [
+            {
+              "$ref": "#/definitions/Address"
+            }
+          ]
+        },
+        {
+          "title": "None",
+          "description": "Nothing.",
+          "dataType": "constructor",
+          "index": 1,
+          "fields": []
+        }
+      ]
+    },
+    "Option$Int": {
+      "title": "Option",
+      "anyOf": [
+        {
+          "title": "Some",
+          "description": "An optional value.",
+          "dataType": "constructor",
+          "index": 0,
+          "fields": [
+            {
+              "$ref": "#/definitions/Int"
+            }
+          ]
+        },
+        {
+          "title": "None",
+          "description": "Nothing.",
+          "dataType": "constructor",
+          "index": 1,
+          "fields": []
+        }
+      ]
+    },
+    "escrow/types/EscrowDatum": {
+      "title": "EscrowDatum",
+      "description": "Escrow datum containing all escrow state",
+      "anyOf": [
+        {
+          "title": "EscrowDatum",
+          "dataType": "constructor",
+          "index": 0,
+          "fields": [
+            {
+              "title": "escrow_id",
+              "$ref": "#/definitions/EscrowId"
+            },
+            {
+              "title": "creator",
+              "$ref": "#/definitions/Address"
+            },
+            {
+              "title": "beneficiary",
+              "$ref": "#/definitions/Address"
+            },
+            {
+              "title": "amount_lovelace",
+              "$ref": "#/definitions/Int"
+            },
+            {
+              "title": "approver1",
+              "$ref": "#/definitions/Address"
+            },
+            {
+              "title": "approver2",
+              "$ref": "#/definitions/Address"
+            },
+            {
+              "title": "approver3",
+              "$ref": "#/definitions/Option$Address"
+            },
+            {
+              "title": "description",
+              "$ref": "#/definitions/ByteArray"
+            },
+            {
+              "title": "approvals",
+              "$ref": "#/definitions/List$Address"
+            },
+            {
+              "title": "is_completed",
+              "$ref": "#/definitions/Bool"
+            },
+            {
+              "title": "created_at",
+              "$ref": "#/definitions/Int"
+            },
+            {
+              "title": "completed_at",
+              "$ref": "#/definitions/Option$Int"
+            }
+          ]
+        }
+      ]
+    },
+    "escrow/types/EscrowRedeemer": {
+      "title": "EscrowRedeemer",
+      "description": "Redeemer actions for the escrow validator",
+      "anyOf": [
+        {
+          "title": "ApproveRelease",
+          "description": "Approve the release of funds",
+          "dataType": "constructor",
+          "index": 0,
+          "fields": [
+            {
+              "title": "escrow_id",
+              "$ref": "#/definitions/EscrowId"
+            }
+          ]
+        },
+        {
+          "title": "CancelEscrow",
+          "description": "Cancel the escrow (creator only, no approvals yet)",
+          "dataType": "constructor",
+          "index": 1,
+          "fields": [
+            {
+              "title": "escrow_id",
+              "$ref": "#/definitions/EscrowId"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
