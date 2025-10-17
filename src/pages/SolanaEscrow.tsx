@@ -77,7 +77,7 @@ const serializeCreateEscrow = (
   return result;
 };
 
-const PROGRAM_ID = new PublicKey("ph9MKvbMqZpx7oUAbwPZJZELrCjKXTGBAn7EBxgicrz");
+const PROGRAM_ID = new PublicKey("EADvxHv8EgzTCxXXqRWZ4CZukSDChstfrY6x89qwJumG");
 const SOLANA_RPC = "https://api.devnet.solana.com";
 
 const SolanaEscrow = () => {
